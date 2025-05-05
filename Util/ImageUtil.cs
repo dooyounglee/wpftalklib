@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -55,6 +56,14 @@ namespace talkLib.Util
                 return ImageFormat.jpeg;
 
             return ImageFormat.unknown;
+        }
+
+        public static bool IsImage(string filename)
+        {
+            string[] image_ext = new string[5] {"bmp","jpeg","gif","tiff","png" };
+            
+            var ext = filename.Substring(filename.LastIndexOf(".") + 1);
+            return image_ext.Contains(ext);
         }
     }
 }
