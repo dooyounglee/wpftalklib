@@ -10,6 +10,7 @@ namespace OTILib.Models
   {
     None, Initial, Connect, Disconnect, ConnectFail,
     StateChange, Invite, Leave,
+    File, Image,
     ChatReload
   }
 }
