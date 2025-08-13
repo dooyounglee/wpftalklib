@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -48,6 +50,16 @@ namespace talkLib.Util
             return response;
         }
 
+        public static async Task<string> Post(string requestUrl, Object? data, byte[] fileBytes, string fileName)
+        {
+            string url = apiUrl + requestUrl;
+            OtiLogger.log1(url);
+
+            string response = await PostApiResponseAsync(url, data, fileBytes, fileName);
+            OtiLogger.log1(response);
+            return response;
+        }
+
         public static Task<string> Post(string requestUrl)
         {
             return Post(requestUrl, new Object());
@@ -72,6 +84,33 @@ namespace talkLib.Util
             var json = JsonSerializer.Serialize(data);
             OtiLogger.log1(json);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        private static async Task<string> PostApiResponseAsync(string url, object data, byte[] fileBytes, string fileName)
+        {
+            var content = new MultipartFormDataContent();
+
+            // 1. object의 각 속성을 개별 필드로 추가
+            foreach (PropertyInfo prop in data.GetType().GetProperties())
+            {
+                object value = prop.GetValue(data);
+                if (value != null)
+                {
+                    content.Add(
+                        new StringContent(value.ToString()),
+                        prop.Name
+                    );
+                }
+            }
+
+            // 2. 파일 추가
+            var fileContent = new ByteArrayContent(fileBytes);
+            fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
+            content.Add(fileContent, "file", fileName);
 
             HttpResponseMessage response = await _httpClient.PostAsync(url, content);
             response.EnsureSuccessStatusCode();
