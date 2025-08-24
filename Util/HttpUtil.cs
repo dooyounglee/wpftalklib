@@ -65,6 +65,16 @@ namespace talkLib.Util
             return Post(requestUrl, new Object());
         }
 
+        public static async Task<string> Put(string requestUrl, Object? data)
+        {
+            string url = apiUrl + requestUrl;
+            OtiLogger.log1(url);
+
+            string response = await PutApiResponseAsync(url, data);
+            OtiLogger.log1(response);
+            return response;
+        }
+
         private static string GetApiResponseSync(string url)
         {
             HttpResponseMessage response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
@@ -113,6 +123,17 @@ namespace talkLib.Util
             content.Add(fileContent, "file", fileName);
 
             HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        private static async Task<string> PutApiResponseAsync(string url, object data)
+        {
+            var json = JsonSerializer.Serialize(data);
+            OtiLogger.log1(json);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.PutAsync(url, content);
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
