@@ -137,5 +137,11 @@ namespace talkLib.Util
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
+
+        public static string getFileUrl(int fileNo)
+        {
+            OtiLogger.log1($"{apiUrl}/file?fileNo={fileNo}");
+            return $"{apiUrl}/file?fileNo={fileNo}";
+        }
     }
 }
