@@ -65,5 +65,10 @@ namespace talkLib.Util
             var ext = filename.Substring(filename.LastIndexOf(".") + 1);
             return image_ext.Contains(ext);
         }
+
+        public static Uri getImage(int fileNo)
+        {
+            return new Uri(HttpUtil.getFileUrl(fileNo));
+        }
     }
 }
