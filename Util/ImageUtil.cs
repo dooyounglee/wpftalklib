@@ -70,5 +70,10 @@ namespace talkLib.Util
         {
             return new Uri(HttpUtil.getFileUrl(fileNo));
         }
+
+        public static Uri getProfile(int usrNo)
+        {
+            return new Uri(HttpUtil.getFileUrl(usrNo));
+        }
     }
 }
