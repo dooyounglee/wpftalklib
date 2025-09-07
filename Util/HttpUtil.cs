@@ -75,6 +75,26 @@ namespace talkLib.Util
             return response;
         }
 
+        public static async Task<string> Delete(string requestUrl)
+        {
+            string url = apiUrl + requestUrl;
+            OtiLogger.log1(url);
+
+            string response = await DeleteApiResponseAsync(url);
+            OtiLogger.log1(response);
+            return response;
+        }
+
+        public static async Task<string> Delete(string requestUrl, Object? data)
+        {
+            string url = apiUrl + requestUrl;
+            OtiLogger.log1(url);
+
+            string response = await DeleteApiResponseAsync(url, data);
+            OtiLogger.log1(response);
+            return response;
+        }
+
         private static string GetApiResponseSync(string url)
         {
             HttpResponseMessage response = _httpClient.GetAsync(url).GetAwaiter().GetResult();
@@ -134,6 +154,29 @@ namespace talkLib.Util
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = await _httpClient.PutAsync(url, content);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        private static async Task<string> DeleteApiResponseAsync(string url)
+        {
+            HttpResponseMessage response = await _httpClient.DeleteAsync(url);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        private static async Task<string> DeleteApiResponseAsync(string url, object data)
+        {
+            var json = JsonSerializer.Serialize(data);
+            OtiLogger.log1(json);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await _httpClient.SendAsync(new HttpRequestMessage
+            {
+                Method = HttpMethod.Delete,
+                RequestUri = new Uri(url),
+                Content = content
+            });
             response.EnsureSuccessStatusCode();
             return await response.Content.ReadAsStringAsync();
         }
