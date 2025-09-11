@@ -12,8 +12,9 @@
     public byte[] Data2 { get; set; }
     public string inviter { get; set; }
     public string invitee { get; set; }
+    public string Title { get; set; }
 
-    public override string ToString()
+        public override string ToString()
     {
       return $"UsrNo: {UsrNo}, UsrId: {UsrId}, UsrNm: {UsrNm}, RoomId: {RoomId}";
     }
